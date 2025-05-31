@@ -3,48 +3,50 @@
 		<div class="card-body">
 			<h4>Registrar persona</h4>
 			<hr>
-			<form>
+			<form [formGroup]="frmInsertPerson">
 				<div class="row">
 					<div class="col-md-3 mb-3">
 						<label for="">Nombre</label>
-						<input type="text" class="form-control">
+						<input type="text" formControlName="firstName" class="form-control">
 					</div>
 					<div class="col-md-3 mb-3">
 						<label for="">Apellido</label>
-						<input type="text" class="form-control">
+						<input type="text" formControlName="surName" class="form-control">
 					</div>
 					<div class="col-md-3 mb-3">
 						<label for="">DNI</label>
-						<input type="text" class="form-control">
+						<input type="text" formControlName="dni" class="form-control">
 					</div>
 					<div class="col-md-3 mb-3">
 						<label for="">Género</label>
 						<div>
-							<label for=""><input type="radio"> Masculino</label>
+							<label for=""><input type="radio" formControlName="gender" value="1"> Masculino</label>
 							&nbsp;&nbsp;
-							<label for=""><input type="radio"> Femenino</label>
+							<label for=""><input type="radio" formControlName="gender" value="0"> Femenino</label>
 						</div>
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-md-3 mb-3">
 						<label for="">Fecha de nacimiento</label>
-						<input type="date" class="form-control">
+						<input type="date" formControlName="birthDate" class="form-control">
 					</div>
 				</div>
 				<hr>
 				<div class="row">
 					<div class="col-md-3 mb-3">
 						<label for="">Celular</label>
-						<input type="text" class="form-control">
+						<input type="text" formControlName="numberPhone" class="form-control">
 					</div>
 					<div class="col-md-3 mb-3">
 						<label for="">Proveedor</label>
-						<select class="form-control"></select>
+						<select class="form-control" formControlName="idProvider">
+							<option *ngFor="let item of listProvider" [value]="item.idProvider">{{item.name}}</option>
+						</select>
 					</div>
 					<div class="col-md-3 mb-3">
 						<label>&nbsp;</label>
-						<button class="btn btn-secondary w-100">Agregar</button>
+						<button class="btn btn-secondary w-100" (click)="clickAddPhone()">Agregar</button>
 					</div>
 				</div>
 				<div class="row">
@@ -58,9 +60,9 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<td>987787876</td>
-									<td>Claro</td>
+								<tr *ngFor="let item of listPhone">
+									<td>{{item.number}}</td>
+									<td>{{item.provider}}</td>
 									<td class="text-end">
 										<button class="btn btn-sm btn-danger">Eliminar</button>
 									</td>
