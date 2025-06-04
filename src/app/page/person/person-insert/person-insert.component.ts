@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
 	selector: 'app-person-insert',
@@ -17,6 +17,8 @@ export class PersonInsertComponent {
 	listPhone: any = [];
 	listProvider: any = [];
 
+	tablePhoneIsValid: boolean | null = null;
+
 	get firstNameFb() { return this.frmInsertPerson.controls['firstName']; }
 	get surNameFb() { return this.frmInsertPerson.controls['surName']; }
 	get dniFb() { return this.frmInsertPerson.controls['dni']; }
@@ -29,11 +31,11 @@ export class PersonInsertComponent {
 		private formBuilder: FormBuilder
 	) {
 		this.frmInsertPerson = this.formBuilder.group({
-			'firstName': ['', []],
-			'surName': ['', []],
-			'dni': ['', []],
-			'gender': ['', []],
-			'birthDate': ['', []],
+			'firstName': ['', [Validators.required]],
+			'surName': ['', [Validators.required]],
+			'dni': ['', [Validators.required, Validators.pattern(/^([0-9]{8})?$/)]],
+			'gender': ['', [Validators.required]],
+			'birthDate': ['', [Validators.required]],
 			'numberPhone': ['', []],
 			'idProvider': ['', []]
 		});
@@ -52,11 +54,60 @@ export class PersonInsertComponent {
 	}
 
 	public clickAddPhone(): void {
+		this.numberPhoneFb.setValidators([Validators.required]);
+		this.idProviderFb.setValidators([Validators.required]);
+
+		this.numberPhoneFb.updateValueAndValidity();
+		this.idProviderFb.updateValueAndValidity();
+
+		if(!this.numberPhoneFb.valid || !this.idProviderFb.valid) {
+			this.numberPhoneFb.markAllAsTouched();
+			this.idProviderFb.markAllAsTouched();
+
+			this.numberPhoneFb.markAsDirty();
+			this.idProviderFb.markAsDirty();
+
+			return;
+		}
+
+		this.numberPhoneFb.clearValidators();
+		this.idProviderFb.clearValidators();
+
+		this.numberPhoneFb.updateValueAndValidity();
+		this.idProviderFb.updateValueAndValidity();
+
 		this.listPhone.push({
 			number: this.numberPhoneFb.value,
 			provider: this.listProvider.filter((x: any) => x.idProvider == this.idProviderFb.value)[0].name
 		});
 
+		this.tablePhoneIsValid = true;
+
 		this.numberPhoneFb.setValue('');
+	}
+
+	public clickDeletePhone(index: number): void {
+		this.listPhone.splice(index, 1);
+
+		this.tablePhoneIsValid = this.listPhone.length > 0;
+	}
+
+	public save(): void {
+		this.numberPhoneFb.clearValidators();
+		this.idProviderFb.clearValidators();
+
+		this.numberPhoneFb.updateValueAndValidity();
+		this.idProviderFb.updateValueAndValidity();
+
+		this.tablePhoneIsValid = this.listPhone.length > 0;
+
+		if(!this.frmInsertPerson.valid || !this.tablePhoneIsValid) {
+			this.frmInsertPerson.markAllAsTouched();
+			this.frmInsertPerson.markAsDirty();
+
+			return;
+		}
+
+		alert('todo ok');
 	}
 }
