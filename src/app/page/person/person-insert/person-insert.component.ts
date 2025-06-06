@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { PersonService } from '../../../api/person.service';
 
 @Component({
 	selector: 'app-person-insert',
@@ -28,7 +29,8 @@ export class PersonInsertComponent {
 	get idProviderFb() { return this.frmInsertPerson.controls['idProvider']; }
 
 	constructor(
-		private formBuilder: FormBuilder
+		private formBuilder: FormBuilder,
+		private personService: PersonService
 	) {
 		this.frmInsertPerson = this.formBuilder.group({
 			'firstName': ['', [Validators.required]],
@@ -108,6 +110,20 @@ export class PersonInsertComponent {
 			return;
 		}
 
-		alert('todo ok');
+		let formData = new FormData();
+
+		formData.append('firstName', this.firstNameFb.value);
+		formData.append('surName', this.surNameFb.value);
+		formData.append('dni', this.dniFb.value);
+		formData.append('gender', this.genderFb.value);
+
+		this.personService.insert(formData).subscribe({
+			next: (response: any) => {
+				console.log(response);
+			},
+			error: (error: any) => {
+				console.log(error);
+			}
+		});
 	}
 }
