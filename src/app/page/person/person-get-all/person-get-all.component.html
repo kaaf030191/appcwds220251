@@ -1,0 +1,23 @@
+<div class="container">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Nombre completo</th>
+				<th>DNI</th>
+				<th>Género</th>
+				<th>Fecha de nacimiento</th>
+				<th>Fecha de registro</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let item of listPerson">
+				<td>{{item.firstName}} {{item.surName}}</td>
+				<td>{{item.dni}}</td>
+				<td>{{item.gender ? 'Masculino' : 'Femenino'}}</td>
+				<td>{{item.birthDate}}</td>
+				<td>{{item.createdAt}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
