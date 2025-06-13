@@ -11,12 +11,15 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr *ngFor="let item of listPerson">
+			<tr *ngFor="let item of listPerson; let i = index">
 				<td>{{item.firstName}} {{item.surName}}</td>
 				<td>{{item.dni}}</td>
 				<td>{{item.gender ? 'Masculino' : 'Femenino'}}</td>
 				<td>{{item.birthDate}}</td>
 				<td>{{item.createdAt}}</td>
+				<td>
+					<button class="btn btn-danger btn-sm" (click)="delete(item.idPerson, i)">Eliminar</button>
+				</td>
 			</tr>
 		</tbody>
 	</table>
