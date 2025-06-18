@@ -2,6 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PersonService } from '../../../api/person.service';
+import { ProviderService } from '../../../api/provider.service';
+
+import Swal from 'sweetalert2';
 
 @Component({
 	selector: 'app-person-insert',
@@ -30,7 +33,8 @@ export class PersonInsertComponent {
 
 	constructor(
 		private formBuilder: FormBuilder,
-		private personService: PersonService
+		private personService: PersonService,
+		private providerService: ProviderService
 	) {
 		this.frmInsertPerson = this.formBuilder.group({
 			'firstName': ['', [Validators.required]],
@@ -44,14 +48,13 @@ export class PersonInsertComponent {
 	}
 
 	ngOnInit(): void {
-		this.listProvider.push({
-			idProvider: '1',
-			name: 'Claro'
-		});
-
-		this.listProvider.push({
-			idProvider: '2',
-			name: 'Movistar'
+		this.providerService.getAll().subscribe({
+			next: (response: any) => {
+				this.listProvider = response.dto.listProvider;
+			},
+			error: (error: any) => {
+				console.log(error);
+			}
 		});
 	}
 
@@ -80,6 +83,7 @@ export class PersonInsertComponent {
 
 		this.listPhone.push({
 			number: this.numberPhoneFb.value,
+			idProvider: this.idProviderFb.value,
 			provider: this.listProvider.filter((x: any) => x.idProvider == this.idProviderFb.value)[0].name
 		});
 
@@ -110,19 +114,37 @@ export class PersonInsertComponent {
 			return;
 		}
 
-		let formData = new FormData();
+		Swal.fire({
+			title: 'Confirmación!',
+			text: '¿Confirmar operación?',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonText: 'Sí, proceder',
+			cancelButtonText: 'No, cancelar',
+			reverseButtons: true
+		}).then((result) => {
+			if (result.isConfirmed) {
+				let formData = new FormData();
 
-		formData.append('firstName', this.firstNameFb.value);
-		formData.append('surName', this.surNameFb.value);
-		formData.append('dni', this.dniFb.value);
-		formData.append('gender', this.genderFb.value);
+				formData.append('firstName', this.firstNameFb.value);
+				formData.append('surName', this.surNameFb.value);
+				formData.append('dni', this.dniFb.value);
+				formData.append('gender', this.genderFb.value);
+				formData.append('birthDate', this.birthDateFb.value);
 
-		this.personService.insert(formData).subscribe({
-			next: (response: any) => {
-				console.log(response);
-			},
-			error: (error: any) => {
-				console.log(error);
+				this.listPhone.forEach((element: any, index: number) => {
+					formData.append(`listPhone[${index}].idProvider`, element.idProvider);
+					formData.append(`listPhone[${index}].number`, element.number);
+				});
+
+				this.personService.insert(formData).subscribe({
+					next: (response: any) => {
+						Swal.fire('Correcto!', response.listMessage[0], response.type);
+					},
+					error: (error: any) => {
+						console.log(error);
+					}
+				});
 			}
 		});
 	}

@@ -15,12 +15,122 @@
 				<td>{{item.firstName}} {{item.surName}}</td>
 				<td>{{item.dni}}</td>
 				<td>{{item.gender ? 'Masculino' : 'Femenino'}}</td>
-				<td>{{item.birthDate}}</td>
-				<td>{{item.createdAt}}</td>
-				<td>
+				<td>{{item.birthDate | dateFormat}}</td>
+				<td>{{item.createdAt | dateFormat:'full'}}</td>
+				<td class="text-end" style="width: 160px;">
+					<button class="btn btn-secondary btn-sm" (click)="showModalPersonEdit(modalPersonEdit, item)">Editar</button>
+					&nbsp;
 					<button class="btn btn-danger btn-sm" (click)="delete(item.idPerson, i)">Eliminar</button>
 				</td>
 			</tr>
 		</tbody>
 	</table>
 </div>
+
+<ng-template #modalPersonEdit>
+	<div class="modal-header">
+		<h4 class="modal-title pull-left">Editar persona</h4>
+	</div>
+	<div class="modal-body">
+		<form [formGroup]="frmInsertPerson">
+			<div class="row">
+				<div class="col-md-3 mb-3">
+					<label for="">Nombre</label>
+					<input type="text" formControlName="firstName" class="form-control">
+					<div *ngIf="(firstNameFb.touched || firstNameFb.dirty) && firstNameFb.errors && firstNameFb.hasError('required')" class="divError">
+						Este campo es requerido.
+					</div>
+				</div>
+				<div class="col-md-3 mb-3">
+					<label for="">Apellido</label>
+					<input type="text" formControlName="surName" class="form-control">
+					<div *ngIf="(surNameFb.touched || surNameFb.dirty) && surNameFb.errors && surNameFb.hasError('required')" class="divError">
+						Este campo es requerido.
+					</div>
+				</div>
+				<div class="col-md-3 mb-3">
+					<label for="">DNI</label>
+					<input type="text" formControlName="dni" class="form-control">
+					<div *ngIf="(dniFb.touched || dniFb.dirty) && dniFb.errors && dniFb.hasError('required')" class="divError">
+						Este campo es requerido.
+					</div>
+					<div *ngIf="(dniFb.touched || dniFb.dirty) && dniFb.errors && dniFb.hasError('pattern')" class="divError">
+						Ingrese un formato correcto.
+					</div>
+				</div>
+				<div class="col-md-3 mb-3">
+					<label for="">Género</label>
+					<div>
+						<label for="genderM"><input type="radio" id="genderM" formControlName="gender" value="1"> Masculino</label>
+						&nbsp;&nbsp;
+						<label for="genderF"><input type="radio" id="genderF" formControlName="gender" value="0"> Femenino</label>
+					</div>
+					<div *ngIf="(genderFb.touched || genderFb.dirty) && genderFb.errors && genderFb.hasError('required')" class="divError">
+						Este campo es requerido.
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3 mb-3">
+					<label for="">Fecha de nacimiento</label>
+					<input type="date" formControlName="birthDate" class="form-control">
+					<div *ngIf="(birthDateFb.touched || birthDateFb.dirty) && birthDateFb.errors && birthDateFb.hasError('required')" class="divError">
+						Este campo es requerido.
+					</div>
+				</div>
+			</div>
+			<hr>
+			<div class="row">
+				<div class="col-md-3 mb-3">
+					<label for="">Celular</label>
+					<input type="text" formControlName="numberPhone" class="form-control">
+					<div *ngIf="(numberPhoneFb.touched || numberPhoneFb.dirty) && numberPhoneFb.errors && numberPhoneFb.hasError('required')" class="divError">
+						Este campo es requerido.
+					</div>
+				</div>
+				<div class="col-md-3 mb-3">
+					<label for="">Proveedor</label>
+					<select class="form-control" formControlName="idProvider">
+						<option *ngFor="let item of listProvider" [value]="item.idProvider">{{item.name}}</option>
+					</select>
+					<div *ngIf="(idProviderFb.touched || idProviderFb.dirty) && idProviderFb.errors && idProviderFb.hasError('required')" class="divError">
+						Este campo es requerido.
+					</div>
+				</div>
+				<div class="col-md-3 mb-3">
+					<label>&nbsp;</label>
+					<button class="btn btn-secondary w-100" (click)="clickAddPhone()">Agregar</button>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>Número</th>
+								<th>Proveedor</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr *ngFor="let item of listPhone; let i = index">
+								<td>{{item.number}}</td>
+								<td>{{item.provider}}</td>
+								<td class="text-end">
+									<button class="btn btn-sm btn-danger" (click)="clickDeletePhone(i)">Eliminar</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div *ngIf="tablePhoneIsValid === false" class="divError">
+						Agrege al menos un teléfono
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-secondary me-auto" (click)="closeModal()">Cerrar ventana</button>
+		<button type="button" class="btn btn-primary" (click)="update()">Guardar cambios</button>
+	</div>
+</ng-template>

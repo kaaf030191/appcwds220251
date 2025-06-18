@@ -32,9 +32,9 @@
 					<div class="col-md-3 mb-3">
 						<label for="">Género</label>
 						<div>
-							<label for=""><input type="radio" formControlName="gender" value="1"> Masculino</label>
+							<label for="genderM"><input type="radio" id="genderM" formControlName="gender" value="1"> Masculino</label>
 							&nbsp;&nbsp;
-							<label for=""><input type="radio" formControlName="gender" value="0"> Femenino</label>
+							<label for="genderF"><input type="radio" id="genderF" formControlName="gender" value="0"> Femenino</label>
 						</div>
 						<div *ngIf="(genderFb.touched || genderFb.dirty) && genderFb.errors && genderFb.hasError('required')" class="divError">
 							Este campo es requerido.
