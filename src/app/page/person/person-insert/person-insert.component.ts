@@ -5,12 +5,14 @@ import { PersonService } from '../../../api/person.service';
 import { ProviderService } from '../../../api/provider.service';
 
 import Swal from 'sweetalert2';
+import { CpErrorMessageComponent } from '../../../shared/cp-error-message/cp-error-message.component';
 
 @Component({
 	selector: 'app-person-insert',
 	imports: [
 		CommonModule,
-		ReactiveFormsModule
+		ReactiveFormsModule,
+		CpErrorMessageComponent
 	],
 	templateUrl: './person-insert.component.html',
 	styleUrl: './person-insert.component.css'
@@ -20,6 +22,8 @@ export class PersonInsertComponent {
 
 	listPhone: any = [];
 	listProvider: any = [];
+
+	listErrorMessage: any[] = [];
 
 	tablePhoneIsValid: boolean | null = null;
 
@@ -124,6 +128,8 @@ export class PersonInsertComponent {
 			reverseButtons: true
 		}).then((result) => {
 			if (result.isConfirmed) {
+				this.listErrorMessage = [];
+
 				let formData = new FormData();
 
 				formData.append('firstName', this.firstNameFb.value);
@@ -139,7 +145,29 @@ export class PersonInsertComponent {
 
 				this.personService.insert(formData).subscribe({
 					next: (response: any) => {
-						Swal.fire('Correcto!', response.listMessage[0], response.type);
+						switch(response.type) {
+							case 'success':
+								Swal.fire('Correcto!', response.listMessage[0], response.type);
+
+								break;
+
+							case 'warning':
+								Swal.fire('Alerta!', response.listMessage[0], response.type);
+
+								break;
+
+							case 'error':
+								response.listMessage.forEach((element: any) => {
+									this.listErrorMessage.push(element);
+								});
+
+								break;
+
+							case 'expcetion':
+								Swal.fire('Error inesperado!', response.listMessage[0], response.type);
+
+								break;
+						}
 					},
 					error: (error: any) => {
 						console.log(error);

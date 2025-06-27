@@ -1,0 +1,9 @@
+<div *ngIf="listErrorMessage.length > 0" class="row">
+	<div class="col-md-12">
+		<div class="alert alert-danger d-flex align-items-center" role="alert">
+			<ul style="margin: 0px;">
+				<li *ngFor="let item of listErrorMessage">{{item}}</li>
+			</ul>
+		</div>
+	</div>
+</div>
